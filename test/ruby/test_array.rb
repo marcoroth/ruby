@@ -3222,6 +3222,42 @@ class TestArray < Test::Unit::TestCase
     assert_equal(10000, eval(lit).size)
   end
 
+  def test_toggle
+    a1 = @cls[ 1, 2, 3]
+    assert_equal(@cls[1, 2, 3, 4], a1.toggle(4))
+
+    a2 = @cls[ 1, 2, 3]
+    assert_equal(@cls[1, 2], a2.toggle(3))
+  end
+
+  def test_toggle_empty
+    a1 = @cls[]
+    assert_equal(@cls[1], a1.toggle(1))
+
+    a2 = @cls[1]
+    assert_equal(@cls[], a2.toggle(1))
+  end
+
+  def test_toggle!
+    a1 = @cls[ 1, 2, 3]
+    assert_equal(@cls[1, 2, 3, 4], a1.toggle!(4))
+    assert_equal(@cls[1, 2, 3, 4], a1)
+
+    a2 = @cls[ 1, 2, 3]
+    assert_equal(@cls[1, 2], a2.toggle!(3))
+    assert_equal(@cls[1, 2], a2)
+  end
+
+  def test_toggle_empty!
+    a1 = @cls[]
+    assert_equal(@cls[1], a1.toggle!(1))
+    assert_equal(@cls[1], a1)
+
+    a2 = @cls[1]
+    assert_equal(@cls[], a2.toggle!(1))
+    assert_equal(@cls[], a2)
+  end
+
   private
   def need_continuation
     unless respond_to?(:callcc, true)

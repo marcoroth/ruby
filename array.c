@@ -6709,6 +6709,63 @@ rb_ary_deconstruct(VALUE ary)
     return ary;
 }
 
+
+/*
+ *  call-seq:
+ *     ary.toggle!(object)   -> ary
+ *
+ *  Adds the given <code>object</code> to <code>self</code> if the <code>object</code> wasn't present or
+ *  removes the <code>object</object> from <code>self</code> if it was present.
+ *
+ *     a = [ "a", "b", "c" ]
+ *     a.toggle!("c")   #=> [ "a", "b" ]
+ *     a                #=> [ "a", "b" ]
+ *     a.toggle!("c")   #=> [ "a", "b", "c" ]
+ *     a                #=> [ "a", "b", "c" ]
+ *
+ *     b = [ "x", "y" ]
+ *     b.toggle!("z")   #=> [ "x", "y", "z" ]
+ *     b                #=> [ "x", "y", "z" ]
+ *     b.toggle!("z")   #=> [ "x", "y" ]
+ *     b                #=> [ "x", "y" ]
+ */
+
+VALUE
+rb_ary_toggle_bang(VALUE ary, VALUE item)
+{
+    if (rb_ary_includes(ary, item)) {
+        rb_ary_delete(ary, item);
+        return ary;
+    } else {
+        return rb_ary_push(ary, item);
+    }
+}
+
+/*
+ *  call-seq:
+ *     ary.toggle(object)   -> new_ary
+ *
+ *  Returns a new array containing the <code>object</code> if the <code>object</code> wasn't present or
+ *  without the object if it was present.
+ *
+ *     a = [ "a", "b", "c" ]
+ *     a.toggle("c")   #=> [ "a", "b" ]
+ *     a               #=> [ "a", "b", "c" ]
+ *
+ *     b = [ "x", "y" ]
+ *     b.toggle("z")   #=> [ "x", "y", "z" ]
+ *     b               #=> [ "x", "y" ]
+ */
+
+VALUE
+rb_ary_toggle(VALUE ary, VALUE item)
+{
+    VALUE copy;
+    copy = rb_ary_dup(ary);
+
+    return rb_ary_toggle_bang(copy, item);
+}
+
 /*
  *  An \Array is an ordered, integer-indexed collection of objects,
  *  called _elements_.  Any object may be an \Array element.
@@ -7032,6 +7089,8 @@ Init_Array(void)
     rb_define_method(rb_cArray, "map!", rb_ary_collect_bang, 0);
     rb_define_method(rb_cArray, "select", rb_ary_select, 0);
     rb_define_method(rb_cArray, "select!", rb_ary_select_bang, 0);
+    rb_define_method(rb_cArray, "toggle", rb_ary_toggle, 1);
+    rb_define_method(rb_cArray, "toggle!", rb_ary_toggle_bang, 1);
     rb_define_method(rb_cArray, "filter", rb_ary_select, 0);
     rb_define_method(rb_cArray, "filter!", rb_ary_select_bang, 0);
     rb_define_method(rb_cArray, "keep_if", rb_ary_keep_if, 0);
